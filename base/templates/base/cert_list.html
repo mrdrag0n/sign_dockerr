@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+        #welcome-nav{
+            font-family: "Roboto", sans-serif;
+            font-weight: 100;
+            font-style: normal;
+        }
+    </style>
+    <title>Certification List</title>
+</head>
+<body>
+<nav class="navbar navbar-dark bg-primary">
+    {% block content %}
+        {% if request.user.is_authenticated %}
+            <p id="welcome-nav ">Welcome Back, {{ request.user }} !</p>
+            <form method="POST" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button class="btn btn-primary" type="submit">logout</button>
+            </form>
+        {% else %}
+            <a href="{% url 'login' %}">login</a>
+        {% endif %}
+        </nav>
+        <div class="container">
+        <h1>Certificates Info : </h1>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>Common Name</th>
+                <th>Organization Name</th>
+                <th>Organization Unit Name</th>
+                <th>Locality</th>
+                <th>State Name</th>
+                <th>Country Name</th>
+                <th>Email address</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for profile in profiles %}
+                <tr>
+                    <td>{{ profile.common_name }}</td>
+                    <td>{{ profile.organization }}</td>
+                    <td>{{ profile.organization_unit_name }}</td>
+                    <td>{{ profile.locality }}</td>
+                    <td>{{ profile.state_name }}</td>
+                    <td>{{ profile.country_name }}</td>
+                    <td>{{ profile.email }}</td>
+                    <td>
+                        <a class="btn btn-info" href="{% url 'profile-detail' profile.id %}">View/Sign</a>
+                        <a class="btn btn-success" href="{% url 'profile-update' profile.id %}">Update</a>
+                        <a class="btn btn-danger" href="{% url 'delete-cert' profile.id %}">Delete</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <h3>there's no certificates</h3>
+            {% endfor %}
+            </tbody>
+        </table>
+        <a class="btn btn-success" href="{% url 'cert-create' %}">Create Certificate</a>
+    {% endblock %}
+    </div>
+
+</body>
+</html>
